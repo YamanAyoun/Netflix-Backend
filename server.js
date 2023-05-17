@@ -18,6 +18,7 @@ server.get('/', homeHandler)
 server.get('/favorite', favoriteHandler)
 server.get('/trending', trendingHandler)
 server.post('/addToFav', addToFav)
+server.put('/updateFavMovie/:id', updateFavmovie)
 server.get('/error', Error500)
 server.get('*', Error400)
 
@@ -98,6 +99,29 @@ function addToFav(req, res){
         Error500(error,req,res)
       })
   }
+
+  function updateFavmovie(req, res) {
+    const id = req.params.id;
+    const updatedMovie = req.body;
+    const sql = `UPDATE addMovie
+    SET id = $1, title = $2, release_date = $3
+    WHERE id = ${id} RETURNING *;`;
+    const values = [updatedMovie.id, updatedMovie.title, updatedMovie.release_date];
+    client.query(sql, values)
+        .then(data => {
+            const sql = `SELECT * FROM addMovie;`;
+            client.query(sql)
+                .then(allData => {
+                    res.send(allData.rows)
+                })
+                .catch((error) => {
+                    errorHandler(error, req, res)
+                })
+        })
+        .catch(error => {
+            console.log(error)
+        })
+}
 
 
 
