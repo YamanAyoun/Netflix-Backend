@@ -3,7 +3,7 @@
 const express = require('express');
 const server = express();
 const axios = require('axios');
-let PORT = process.env.PORT || 3000; 
+let PORT = process.env.PORT || 3005; 
 const cors = require('cors');
 require('dotenv').config();
 const pg = require('pg');
@@ -17,7 +17,7 @@ const client = new pg.Client(process.env.DATABASE_URL)
 server.get('/', homeHandler)
 server.get('/favorite', favoriteHandler)
 server.get('/trending', trendingHandler)
-server.post('/addMovie', addFav)
+server.post('/addToFav', addToFav)
 server.get('/error', Error500)
 server.get('*', Error400)
 
@@ -84,7 +84,7 @@ function trendingHandler(req, res) {
 
 };
 
-function addFav(req, res){
+function addToFav(req, res){
     const movie = req.body;
       console.log(movie);
       const sql = `INSERT INTO addMovie (id, title, release_date)
